@@ -1,23 +1,30 @@
 clear
-cellFiles=500;
+cellFiles=1000;
+rep=1;
 days=[7 15 21];
 
 % Change to true to use provided ".mat" file matching manuscript figure
 plot_from_fig=false;
 
 if plot_from_fig
-	filename=['nbin_cellFiles',int2str(cellFiles),'_timecourse_exOFF'];
+	filename='pONOFF_cellFiles1000.mat';
+    S=load(filename);
+    cellFiles=S.cellFiles;
+    rootCellFile7=S.rootCellFile7;
+    rootCellFile15=S.rootCellFile15;
+    rootCellFile21=S.rootCellFile21;
 else
-	filename=['nbin_cellFiles',int2str(cellFiles),'_timecourse'];
+	filename=['pONOFF_cellFiles',int2str(cellFiles),'_rep_',int2str(rep)];
 end
 
 %% Model parameters
-p=0.25;
+pON=0.0007;% probability of OFF cell switching ON!
+pOFF=0.01;% probability of ON cell switching OFF!
 ONmu=-1.2;
 OFFmu=-2.3;
-ONstd=0.6;
-OFFstd=0.4;
-parameters=[p ONmu OFFmu ONstd OFFstd];
+ONstd=0.7;
+OFFstd=0.3;
+parameters=[pON pOFF ONmu OFFmu ONstd OFFstd];
 
 %% run model
 if ~plot_from_fig
@@ -42,8 +49,6 @@ end
 plot_from_saved_with_data(filename,sub)
 
 %% draw roots
-if ~plot_from_fig
-	for i=1:10
-		draw_roots_state_and_Protein(rootCellFile7(i*12+(1:12)),rootCellFile15(i*12+(1:12)),rootCellFile21(i*12+(1:12)));
-	end
+for i=1:10
+	draw_roots_state_and_Protein(rootCellFile7(i*12+(1:12)),rootCellFile15(i*12+(1:12)),rootCellFile21(i*12+(1:12)));
 end

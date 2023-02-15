@@ -7,10 +7,10 @@ cellFiles=options{2*find(ismember(options(1:2:length(options)),'cellFiles'))};
 
 % vector with parameter values
 parameters=options{2*find(ismember(options(1:2:length(options)),'parameters'))};
-ONmu=parameters(2);
-OFFmu=parameters(3);
-ONstd=parameters(4);
-OFFstd=parameters(5);
+ONmu=parameters(3);
+OFFmu=parameters(4);
+ONstd=parameters(5);
+OFFstd=parameters(6);
 
 %% Protein
 for k=1:cellFiles

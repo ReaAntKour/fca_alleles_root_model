@@ -20,6 +20,8 @@ for timepoint=1:3
 		maxProtein=max([maxProtein;rootCellFile{k}.Protein]);
 	end
 end
+maxWhite=1.5;
+
 for timepoint=1:3
 	rootCellFile=rootCellFiles{timepoint};
 	for k=1:cellFiles
@@ -40,13 +42,7 @@ for timepoint=1:3
 		ProotStructure=nan(cellFileLength,1);
 		currentPosition=0;
 		for i=1:cellFileLength
-			if rootCellFile{k}.Protein(i)<=(maxProtein/2)
-				ProotStructure(i)=fill([k+1 k+1 k k],[currentPosition currentPosition+1 currentPosition+1 currentPosition],[rootCellFile{k}.Protein(i)/(maxProtein/2),rootCellFile{k}.Protein(i)/(maxProtein/2),0],'edgecolor','r');
-			elseif rootCellFile{k}.Protein(i)<=maxProtein
-				ProotStructure(i)=fill([k+1 k+1 k k],[currentPosition currentPosition+1 currentPosition+1 currentPosition],[1,1,rootCellFile{k}.Protein(i)/(maxProtein/2)-1],'edgecolor','r');
-			else
-				ProotStructure(i)=fill([k+1 k+1 k k],[currentPosition currentPosition+1 currentPosition+1 currentPosition],[0,1,1],'edgecolor','r');
-			end
+			ProotStructure(i)=drawSquare(k,currentPosition,currentPosition+1,rootCellFile{k}.Protein(i),maxWhite,maxProtein,'r');
 			if i==1
 				hold on
 			end
@@ -89,14 +85,19 @@ set(gca,'xtick',[])
 subplot(sub(8))
 Protein=0:0.2:maxProtein;
 for i=1:length(Protein)
-	if Protein(i)<=(maxProtein/2)
-		fill([k+1 k+1 k k],[Protein(i)-0.1 Protein(i)+0.1 Protein(i)+0.1 Protein(i)-0.1],[Protein(i)/(maxProtein/2),Protein(i)/(maxProtein/2),0],'edgecolor','none');
-	elseif Protein(i)<=maxProtein
-		fill([k+1 k+1 k k],[Protein(i)-0.1 Protein(i)+0.1 Protein(i)+0.1 Protein(i)-0.1],[1,1,Protein(i)/(maxProtein/2)-1],'edgecolor','none');
-	else
-		fill([k+1 k+1 k k],[Protein(i)-0.1 Protein(i)+0.1 Protein(i)+0.1 Protein(i)-0.1],[0,1,1],'edgecolor','none');
-	end
+	drawSquare(0,Protein(i)-0.1,Protein(i)+0.1,Protein(i),maxWhite,maxProtein,'none');
 	hold on
 end
 ylim([-0.1 maxProtein-0.1])
 set(gca,'xtick',[])
+end
+
+function area=drawSquare(x,currentPosition1,currentPosition2,intensity,maxWhite,maxProtein,edgecolor)
+    if intensity<=(maxWhite/2)
+		area=fill([x+1 x+1 x x],[currentPosition1 currentPosition2 currentPosition2 currentPosition1],[intensity/(maxWhite/2),intensity/(maxWhite/2),0],'edgecolor',edgecolor);
+	elseif intensity<=maxWhite
+		area=fill([x+1 x+1 x x],[currentPosition1 currentPosition2 currentPosition2 currentPosition1],[1,1,intensity/(maxWhite/2)-1],'edgecolor',edgecolor);
+	else
+		area=fill([x+1 x+1 x x],[currentPosition1 currentPosition2 currentPosition2 currentPosition1],[1-(intensity-maxWhite)/(maxProtein),1,1-(intensity-maxWhite)/(maxProtein)],'edgecolor',edgecolor);
+    end
+end

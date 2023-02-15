@@ -26,22 +26,22 @@ genotypes_name={'fca3','fca1','Ler'};
 timepoints=[7 15 21];
 filename='Venus_time_course.csv';
 for time=1:3
-	timepoint=timepoints(time);
+    timepoint=timepoints(time);
 	for gen=1:length(genotypes)
 		for rep=1:3
-			% read in data
-			spheresTemp=readtable(filename);
-			spheresTemp=spheresTemp((ismember(spheresTemp.genotype,genotypes{gen})),:);
-			spheresTemp=spheresTemp((spheresTemp.overlap_fraction>=0.55),:);
-			spheresTemp=spheresTemp((spheresTemp.timepoint==timepoint),:);
-			spheresTemp=spheresTemp(ismember(spheresTemp.flag,''),:);%not "excluded"
-			spheresTemp=spheresTemp(ismember(spheresTemp.tissue,'epidermis'),:);%cortex
-			if rep==3
-				spheresTemp=spheresTemp(ismember(spheresTemp.replicate,{'exp3','exp4'}),:);
-			else
-				spheresTemp=spheresTemp(ismember(spheresTemp.replicate,['exp',num2str(rep)]),:);
-			end
-			spheres.(genotypes_name{gen}){time,rep}=spheresTemp.mean_in_sphere./spheresTemp.overlap_fraction-spheresTemp.mean_outside_sphere;
+		    % read in data
+		    spheresTemp=readtable(filename,'Format','auto');
+		    spheresTemp=spheresTemp((ismember(spheresTemp.genotype,genotypes{gen})),:);
+		    spheresTemp=spheresTemp((spheresTemp.overlap_fraction>=0.55),:);
+		    spheresTemp=spheresTemp((spheresTemp.timepoint==timepoint),:);
+		    spheresTemp=spheresTemp(ismember(spheresTemp.flag,''),:);%not "excluded"
+		    spheresTemp=spheresTemp(ismember(spheresTemp.tissue,'epidermis'),:);%cortex
+		    if rep==3
+			    spheresTemp=spheresTemp(ismember(spheresTemp.replicate,{'exp3','exp4'}),:);
+		    else
+			    spheresTemp=spheresTemp(ismember(spheresTemp.replicate,['exp',num2str(rep)]),:);
+		    end
+            spheres.(genotypes_name{gen}){time,rep}=spheresTemp.mean_in_sphere./spheresTemp.overlap_fraction-spheresTemp.mean_outside_sphere;
 		end
 	end
 end
@@ -53,7 +53,7 @@ xlim2F=20;
 cols={'k',[0 0 0.5],[0.5 0 0]};
 for timepoint=1:3
     for gen=I
-		sphereM=[spheres.(genotypes_name{gen}){timepoint,1};spheres.(genotypes_name{gen}){timepoint,2};spheres.(genotypes_name{gen}){timepoint,3}];
+        sphereM=[spheres.(genotypes_name{gen}){timepoint,1};spheres.(genotypes_name{gen}){timepoint,2};spheres.(genotypes_name{gen}){timepoint,3}];
 		titl=[genotypes{gen},', T',num2str(timepoints(timepoint)),', Combined exp'];
 		meanIntensity=mean(sphereM);
 		
@@ -65,7 +65,10 @@ for timepoint=1:3
 		set(area,'facealpha',1-timepoint/4,'edgecolor','none','displayname',[titl,' '])%,'edgecolor','none'
 		hold on
 		plot([meanIntensity meanIntensity],[0 100],'b')
-		text(1,40,num2str(meanIntensity,2))
+		plot([median(sphereM) median(sphereM)],[0 100],'r')
+		text(1,20,['Median: ',num2str(median(sphereM),2)],'color','r')
+		text(1,50,['Mean: ',num2str(meanIntensity,2)],'color','b')
+		text(1,80,['n=',num2str(length(sphereM))])
 		if timepoint==2
 			xlabel('Intensity')
 		end

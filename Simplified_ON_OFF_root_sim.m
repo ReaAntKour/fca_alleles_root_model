@@ -26,8 +26,8 @@ steps=ceil(simDuration/timestep);
 
 % vector with parameter values
 parameters=options{2*find(ismember(options(1:2:length(options)),'parameters'))};
-p=parameters(1);
-
+pON=parameters(1);
+pOFF=parameters(2);
 
 %% setup root
 MeanCellCycleLength=setup_root_division_parameters('stochastic');% cell cycle lengths according to position (alternative "deterministic"). details given in function
@@ -50,9 +50,10 @@ end
 for k=1:cellFiles
 	timeInt=1;
 	for j=1:steps% of length given by "timestep"
-		%% divide cells and switch OFF
+		%% divide cells and switch OFF (independently)
 		if (j*timestep)>=timeInt
-			rootCellFile{k}=root_sim_divide_and_switch(rootCellFile{k},p,cellFileLength,MeanCellCycleLength);
+			rootCellFile{k}=root_sim_divide(rootCellFile{k},cellFileLength,MeanCellCycleLength);
+			rootCellFile{k}=root_sim_switch(rootCellFile{k},pON,pOFF,cellFileLength);
 			timeInt=timeInt+1;
 		end
 	end

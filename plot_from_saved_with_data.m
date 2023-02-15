@@ -48,21 +48,23 @@ for i=1:6
 	x=[m;m];x=x(2:end-1);
 	y=100*[histData/length(h{i});histData/length(h{i})];y=y(:)';
 	area=fill(x,y,[0 0 0.5]);
-	set(area,'facecolor','none','edgecolor','k')%,'edgecolor','none'
+	set(area,'facecolor','none','edgecolor','k','LineWidth',2)
 	hold on
-    plot([mean(h{i}) mean(h{i})],[0 100],'k--')
-    text(1,70,num2str(mean(h{i}),2))
+    plot([mean(h{i}) mean(h{i})],[0 100],'--','color',[0.3,0.75,0.93],'LineWidth',2)
+    plot([median(h{i}) median(h{i})],[0 100],'--','color',[255,102,51]/255,'LineWidth',2)
+    text(1,65,num2str(mean(h{i}),2),'color',[0.3,0.75,0.93])
+	text(1,35,num2str(median(h{i}),2),'color',[255,102,51]/255)
 	if i==7
 		ylabel('% Counts')
 	end
 	ylim([0 100])
-	set(gca,'ytick',[0 50 100])
+	set(gca,'ytick',[0 50 100],'LineWidth',1)
 	xlim([m(1) m(end)])
 	if i<4
 		xlabel('ON/OFF')
 	else
 		xlabel('Intensity per cell')
-		xlim([-0.2 2])
+		xlim([-0.2 1.5])
 	end
 	
 	if mod(i,3)==1
