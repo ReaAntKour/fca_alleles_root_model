@@ -1,12 +1,18 @@
 function sub=draw_roots_state_and_Protein(rootCellFile7,rootCellFile15,rootCellFile21)
 figure
 set(gcf,'outerposition',[100 40 630 1040])
-sub(1)=subplot(2,3,1);
-sub(2)=subplot(2,3,4);
-sub(3)=subplot(2,3,2);
-sub(4)=subplot(2,3,5);
-sub(5)=subplot(2,3,3);
-sub(6)=subplot(2,3,6);
+sub(1)=axes;
+set(sub(1),'position',[0.1,0.52,0.22,0.4])
+sub(2)=axes;
+set(sub(2),'position',[0.1,0.1,0.22,0.4])
+sub(3)=axes;
+set(sub(3),'position',[0.4,0.52,0.22,0.4])
+sub(4)=axes;
+set(sub(4),'position',[0.4,0.1,0.22,0.4])
+sub(5)=axes;
+set(sub(5),'position',[0.7,0.52,0.22,0.4])
+sub(6)=axes;
+set(sub(6),'position',[0.7,0.1,0.22,0.4])
 linkaxes(sub)
 
 timepoints=[7 15 21];
@@ -31,7 +37,7 @@ for timepoint=1:3
 		rootStructure=nan(cellFileLength,1);
 		currentPosition=0;
 		for i=1:cellFileLength
-			rootStructure(i)=fill([k+1 k+1 k k],[currentPosition currentPosition+1 currentPosition+1 currentPosition],[rootCellFile{k}.CellON(i),rootCellFile{k}.CellON(i),0],'edgecolor','r');
+			rootStructure(i)=fill([k+1 k+1 k k],[currentPosition currentPosition+1 currentPosition+1 currentPosition],[rootCellFile{k}.CellON(i)*2/3+(rootCellFile{k}.CellON(i)==1)*1/3,rootCellFile{k}.CellON(i)*2/3,(rootCellFile{k}.CellON(i)<1)*rootCellFile{k}.CellON(i)*4/3],'edgecolor',[1 1 1]*0.5);
 			if i==1
 				hold on
 			end
@@ -42,13 +48,16 @@ for timepoint=1:3
 		ProotStructure=nan(cellFileLength,1);
 		currentPosition=0;
 		for i=1:cellFileLength
-			ProotStructure(i)=drawSquare(k,currentPosition,currentPosition+1,rootCellFile{k}.Protein(i),maxWhite,maxProtein,'r');
+			ProotStructure(i)=drawSquare(k,currentPosition,currentPosition+1,rootCellFile{k}.Protein(i),maxWhite,maxProtein,[1 1 1]*0.5);
 			if i==1
 				hold on
 			end
 			currentPosition=currentPosition+1;
 		end
 	end
+	set(sub(2*timepoint-1),'visible','off')
+	set(sub(2*timepoint),'visible','off')
+	subplot(sub(2*timepoint-1))
 	title([int2str(timepoints(timepoint)),' days after sowing'])
 end
 
@@ -69,18 +78,18 @@ end
 %% colourbars
 k=0;
 sub(7)=axes;
-set(sub(7),'position',[0.93,0.8,0.05,0.1])
+set(sub(7),'position',[0.93,0.82,0.05,0.1])
 sub(8)=axes;
-set(sub(8),'position',[0.93,0.3,0.05,0.1])
+set(sub(8),'position',[0.93,0.4,0.05,0.1])
 
 subplot(sub(7))
 CellON=[0,0.5,1];
 for i=1:3
-	fill([k+1 k+1 k k],[CellON(i)-0.25 CellON(i)+0.25 CellON(i)+0.25 CellON(i)-0.25],[CellON(i),CellON(i),0],'edgecolor','none');
+	fill([k+1 k+1 k k],[CellON(i)-0.25 CellON(i)+0.25 CellON(i)+0.25 CellON(i)-0.25],[CellON(i)*2/3+(CellON(i)==1)*1/3,CellON(i)*2/3,(CellON(i)<1)*CellON(i)*4/3],'edgecolor','none');
 	hold on
 end
 ylim([-0.25 1.25])
-set(gca,'xtick',[])
+set(gca,'xtick',[],'YTickLabel',{'0','1','2'})
 
 subplot(sub(8))
 Protein=0:0.2:maxProtein;
@@ -93,11 +102,13 @@ set(gca,'xtick',[])
 end
 
 function area=drawSquare(x,currentPosition1,currentPosition2,intensity,maxWhite,maxProtein,edgecolor)
-    if intensity<=(maxWhite/2)
-		area=fill([x+1 x+1 x x],[currentPosition1 currentPosition2 currentPosition2 currentPosition1],[intensity/(maxWhite/2),intensity/(maxWhite/2),0],'edgecolor',edgecolor);
+    if intensity<=(maxWhite/3)
+		area=fill([x+1 x+1 x x],[currentPosition1 currentPosition2 currentPosition2 currentPosition1],[intensity/(maxWhite/3)/3,intensity/(maxWhite/3)/3,intensity/(maxWhite/3)*2/3],'edgecolor',edgecolor);
+	elseif intensity<=(maxWhite*2/3)
+		area=fill([x+1 x+1 x x],[currentPosition1 currentPosition2 currentPosition2 currentPosition1],[1/3+(intensity-(maxWhite/3))/(maxWhite/3)/3,1/3,2/3],'edgecolor',edgecolor);
 	elseif intensity<=maxWhite
-		area=fill([x+1 x+1 x x],[currentPosition1 currentPosition2 currentPosition2 currentPosition1],[1,1,intensity/(maxWhite/2)-1],'edgecolor',edgecolor);
+		area=fill([x+1 x+1 x x],[currentPosition1 currentPosition2 currentPosition2 currentPosition1],[2/3+(intensity-(2*maxWhite/3))/(maxWhite/3)/3,1/3,(maxWhite-intensity)/(maxWhite/3)*2/3],'edgecolor',edgecolor);
 	else
-		area=fill([x+1 x+1 x x],[currentPosition1 currentPosition2 currentPosition2 currentPosition1],[1-(intensity-maxWhite)/(maxProtein),1,1-(intensity-maxWhite)/(maxProtein)],'edgecolor',edgecolor);
+		area=fill([x+1 x+1 x x],[currentPosition1 currentPosition2 currentPosition2 currentPosition1],[1,2*(intensity-maxWhite)/(3*(maxProtein-maxWhite))+1/3,0],'edgecolor',edgecolor);
     end
 end

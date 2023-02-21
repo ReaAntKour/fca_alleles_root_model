@@ -4,7 +4,7 @@ rep=1;
 days=[7 15 21];
 
 % Change to true to use provided ".mat" file matching manuscript figure
-plot_from_fig=false;
+plot_from_fig=true;
 
 if plot_from_fig
 	filename='pONOFF_cellFiles1000.mat';
